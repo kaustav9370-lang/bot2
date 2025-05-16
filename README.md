@@ -179,6 +179,153 @@ PORT = 8080
 /status     : To Get Bot Status and Total Users. [ADMIN]
 /broadcast  : To Broadcast any message to all users of bot. [ADMIN]
 ```
+</details>
+<details>
+<summary><b>Reverse Proxy with Cloudflare SSL</b></summary>
+
+  #### Reverse Proxy Setup for File Streaming Bot with Cloudflare SSL
+ 
+This guide will walk you through setting up a secure reverse proxy using **NGINX** for your file streaming bot with a **Cloudflare-protected domain**.
+
+---
+
+#### ✅ Prerequisites
+
+- A **VPS or server** running Ubuntu/Debian with NGINX installed
+- Your **file streaming bot** is running on a local port (e.g., `5063`)
+- You have a **subdomain** (e.g., `dl.yoursite.com`) set up in **Cloudflare**
+- You already generated and downloaded **Cloudflare Origin Certificate**:
+  - `cert.pem`
+  - `key.key`
+
+---
+
+#### 🔐 Step 1: Setup Cloudflare & Place Your Cloudflare SSL Certificates
+
+- Go to your domain on [Cloudflare Dashboard](https://dash.cloudflare.com)
+- Navigate to **DNS** → Add an `A` record:
+  - Name: `dl` OR Anything else you want
+  - Content: Your server IP
+  - Proxy Status: **Proxied (orange cloud)**
+
+- In **SSL/TLS** settings:
+  - Set **Full (strict)** mode
+  - Create your **Origin Certificate** if you haven’t
+
+---
+First, create a secure directory for your subdomain's SSL files:
+
+```bash
+sudo mkdir -p /etc/ssl/cloudflare/dl.yoursite.com
+````
+
+If you already downloaded the Cloudflare Origin Certificate files (`cert.pem` and `key.key`), move them into the directory:
+
+```bash
+sudo mv cert.pem key.key /etc/ssl/cloudflare/dl.yoursite.com/
+```
+---
+Alternatively, you can **save the contents directly** into the files using a text editor:
+
+1. Open a new file to paste your certificate:
+
+   ```bash
+   sudo nano /etc/ssl/cloudflare/dl.yoursite.com/cert.pem
+   ```
+
+   Paste your **Origin Certificate** contents and save with `CTRL+O`, then exit with `CTRL+X`.
+
+2. Then open and paste your **Private Key**:
+
+   ```bash
+   sudo nano /etc/ssl/cloudflare/dl.yoursite.com/key.key
+   ```
+
+   Paste the key and save it the same way.
+
+Your SSL certificates are now securely placed and ready for use in your NGINX reverse proxy configuration.
+
+
+
+
+---
+
+#### 🛠 Step 2: Create NGINX Reverse Proxy Config
+
+Create a new config file:
+
+```bash
+sudo nano /etc/nginx/sites-available/dl.yoursite.conf
+```
+
+Paste the following (replace `dl.yoursite.com` and port `port` as needed):
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name dl.yourdomain.com;
+
+    ssl_certificate     /etc/ssl/cloudflare/dl.yourdomain.com/cert.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/dl.yourdomain.com/key.key;
+
+    location / {
+        proxy_pass http://localhost:port;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name dl.yourdomain.com;
+
+    return 301 https://$host$request_uri;
+}
+```
+
+Enable the site:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/dl.yoursite.conf /etc/nginx/sites-enabled/
+```
+
+---
+
+#### 🔄 Step 3: Test & Reload NGINX
+
+Test for syntax errors:
+
+```bash
+sudo nginx -t
+```
+
+Reload NGINX:
+
+```bash
+sudo systemctl reload nginx
+```
+
+---
+
+
+
+#### ✅ Step 5: Test File Streaming
+
+You can test with `curl` to ensure reverse proxy works:
+
+```bash
+curl -I https://dl.yoursite.com/dl/<file_id>
+```
+
+
+---
+
+
+#### 🎉 Done!
+
+You now have a reverse proxy securely streaming files behind Cloudflare using NGINX!
 
 #### 🍟 Channel Support :
 
@@ -194,7 +341,7 @@ PORT = 8080
 - [**Biisal**](https://github.com/biisal) : for Stream Page UI
 
 ---
-<h4 align='center'>© 2024 Aνιѕнкαя Pαтιℓ</h4>
+<h4 align='center'>© 2025 Aνιѕнкαя Pαтιℓ</h4>
 
 
 
