@@ -14,7 +14,7 @@ class LANG(object):
 <b>- sᴇɴᴅ ᴍᴇ ᴀɴʏ ᴅᴏᴄᴜᴍᴇɴᴛ ᴏʀ ᴍᴇᴅɪᴀ</b>
 <b>- ɪ'ʟʟ ᴘʀᴏᴠɪᴅᴇ sᴛʀᴇᴀᴍᴀʙʟᴇ ʟɪɴᴋ</b>\n
 <b>🔞 ᴀᴅᴜʟᴛ ᴄᴏɴᴛᴇɴᴛ sᴛʀɪᴄᴛʟʏ ᴘʀᴏʜɪʙɪᴛᴇᴅ.</b>\n
-<i><b> ʀᴇᴘᴏʀᴛ ʙᴜɢs ᴛᴏ <a href='https://telegram.me/Kaustavhibot>ᴅᴇᴠᴇʟᴏᴘᴇʀ</a></b></i>"""
+<i><b> ʀᴇᴘᴏʀᴛ ʙᴜɢs ᴛᴏ <a href='https://telegram.me/Kaustavhibot'>ᴅᴇᴠᴇʟᴏᴘᴇʀ</a></b></i>"""
 
     ABOUT_TEXT = """
 <b>⚜ ᴍʏ ɴᴀᴍᴇ : {}</b>\n
